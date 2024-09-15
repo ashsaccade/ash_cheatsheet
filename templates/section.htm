@@ -9,12 +9,21 @@
 </head>
 
 <body>
-<h1> Cheatsheet for {{ .SectionName }} </h1>
 
-{{ range .Cards }}
-<h2>{{ .Name }}</h2>
-<p>{{ .Description }}</p>
-{{ end }}
+<div class="container is-max-tablet">
+    <div class="content">
+    <h1> Cheatsheet for {{ .SectionName }} </h1>
+    </div>
+
+    {{ range .Cards }}
+    <div class="box">
+        <div class="content">
+            <h2>{{ .Name }}</h2>
+            <p>{{ .Description }}</p>
+        </div>
+    </div>
+    {{ end }}
+</div>
 
 </body>
 
