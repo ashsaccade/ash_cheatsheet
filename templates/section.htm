@@ -8,7 +8,13 @@
 </head>
 
 <body>
-<h1> Cheatsheet for {{ .Name }} </h1>
+<h1> Cheatsheet for {{ .SectionName }} </h1>
+
+{{ range .Cards }}
+<h2>{{ .Name }}</h2>
+<p>{{ .Description }}</p>
+{{ end }}
+
 </body>
 
 </html>
