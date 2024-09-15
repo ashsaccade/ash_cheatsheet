@@ -8,11 +8,16 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type SectionData struct {
 	SectionName string
 	Cards       []CardView
+}
+
+type AddCardData struct {
+	SectionName string
 }
 
 type CardView struct {
@@ -36,16 +41,41 @@ func main() {
 		panic("section htm is nil")
 	}
 
-	http.HandleFunc("GET /static/bulma.min.css",
+	cardHtm := tmpl.Lookup("add_card.htm")
+	if cardHtm == nil {
+		panic("new_card htm is nil")
+	}
+
+	http.HandleFunc("GET /static/{filename}",
 		func(writer http.ResponseWriter, request *http.Request) {
-			writer.Header().Add("Content-Type", "text/css")
-			f, err := os.Open("static/bulma.min.css")
+			fileName := request.PathValue("filename")
+
+			switch {
+			case strings.HasSuffix(fileName, ".css"):
+				writer.Header().Add("Content-Type", "text/css")
+			case strings.HasSuffix(fileName, ".woff2"):
+				writer.Header().Add("Content-Type", "application/font-woff2")
+			default:
+				panic("invalid file")
+			}
+
+			f, err := os.Open("static/" + fileName)
 			if err != nil {
 				panic(err)
 			}
 			defer f.Close()
 
 			if _, err := io.Copy(writer, f); err != nil {
+				panic(err)
+			}
+		},
+	)
+
+	http.HandleFunc("GET /sheet/{section}/add",
+		func(writer http.ResponseWriter, request *http.Request) {
+			section := request.PathValue("section")
+
+			if err := cardHtm.Execute(writer, AddCardData{SectionName: section}); err != nil {
 				panic(err)
 			}
 		},

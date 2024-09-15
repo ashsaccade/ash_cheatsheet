@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Test</title>
+    <link rel="stylesheet" href="/static/bulma.min.css">
+    <link rel="stylesheet" href="/static/global.css">
+</head>
+
+<body>
+<div class="container is-max-tablet">
+    <h1> Добавление новой карточки в {{ .SectionName }} </h1>
+    <form>
+        <input class="input mt-4" type="text" placeholder="Название карточки" name="name"/>
+        <textarea class="textarea is-link mt-4" placeholder="Описание карточки" name="description"></textarea>
+    </form>
+</div>
+</body>
+
+</html>
