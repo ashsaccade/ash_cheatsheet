@@ -5,7 +5,9 @@ import (
 	"ash_cheatsheet/internal/entities"
 	"github.com/pav5000/go-common/lambda"
 	"html/template"
+	"io"
 	"net/http"
+	"os"
 )
 
 type SectionData struct {
@@ -33,6 +35,21 @@ func main() {
 	if sectionHtm == nil {
 		panic("section htm is nil")
 	}
+
+	http.HandleFunc("GET /static/bulma.min.css",
+		func(writer http.ResponseWriter, request *http.Request) {
+			writer.Header().Add("Content-Type", "text/css")
+			f, err := os.Open("static/bulma.min.css")
+			if err != nil {
+				panic(err)
+			}
+			defer f.Close()
+
+			if _, err := io.Copy(writer, f); err != nil {
+				panic(err)
+			}
+		},
+	)
 
 	http.HandleFunc("GET /sheet/{section}",
 		func(writer http.ResponseWriter, request *http.Request) {
