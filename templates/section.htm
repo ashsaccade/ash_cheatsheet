@@ -7,21 +7,26 @@
     <title>Test</title>
     <link rel="stylesheet" href="/static/bulma.min.css">
     <link rel="stylesheet" href="/static/global.css">
+    <script src="/static/htmx.js"></script>
 </head>
 
 <body>
 
 <div class="container is-max-tablet">
     <div class="content">
-    <h1> Cheatsheet for {{ .SectionName }} </h1>
+        <h1> Cheatsheet for {{ .SectionName }} </h1>
         <a href="/sheet/{{.SectionName}}/add">
             Add card
         </a>
     </div>
 
     {{ range .Cards }}
-    <div class="box">
-        <span class="icon fa fa-trash" style="float: right"></span>
+    <div class="box" id="card_{{.Id}}">
+        <span
+                hx-delete="/sheet/{{$.SectionName}}/{{.Id}}"
+                hx-target="#card_{{.Id}}" hx-swap="delete"
+                class="icon fa fa-trash is-clickable" style="float: right"
+        ></span>
 
         <div class="content">
             <h2>{{ .Name }}</h2>

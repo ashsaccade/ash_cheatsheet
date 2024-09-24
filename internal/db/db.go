@@ -30,13 +30,35 @@ type CardRow struct {
 	Section     string
 }
 
+func (c *Client) DeleteCard(ctx context.Context, id int64, sectionName string) error {
+	q := `delete from cards where id = ? and section = ?`
+
+	_, err := c.conn.ExecContext(ctx, q, id, sectionName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Client) InsertNewCard(ctx context.Context, card entities.Card) error {
+	q := `
+	insert into cards (name, description, section)
+	values (?, ?, ?)`
+
+	_, err := c.conn.ExecContext(ctx, q, card.Name, card.Description, card.Section)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Client) SelectAllCardsBySection(ctx context.Context, sectionName string) ([]entities.Card, error) {
 	q := `
 		select id, name, description, section
 		from cards
 		where section = ?`
 
-	cardsDb := []CardRow{}
+	var cardsDb []CardRow
 
 	err := c.conn.SelectContext(ctx, &cardsDb, q, sectionName)
 	if err != nil {

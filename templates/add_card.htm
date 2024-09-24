@@ -7,15 +7,24 @@
     <title>Test</title>
     <link rel="stylesheet" href="/static/bulma.min.css">
     <link rel="stylesheet" href="/static/global.css">
+    <script src="/static/htmx.js"></script>
 </head>
 
 <body>
 <div class="container is-max-tablet">
-    <h1> Добавление новой карточки в {{ .SectionName }} </h1>
-    <form>
+    <div class="content mt-4">
+        <h1> Добавление новой карточки в {{ .SectionName }} </h1>
+    </div>
+
+    <form hx-post="/sheet/{{ .SectionName }}/add" hx-target="#result">
         <input class="input mt-4" type="text" placeholder="Название карточки" name="name"/>
         <textarea class="textarea is-link mt-4" placeholder="Описание карточки" name="description"></textarea>
+        <div class="is-flex is-justify-content-right">
+            <input class="button is-success mt-4" type="submit" value="Добавить"/>
+        </div>
     </form>
+
+    <div id="result"></div>
 </div>
 </body>
 
