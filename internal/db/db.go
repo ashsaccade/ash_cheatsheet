@@ -30,6 +30,30 @@ type CardRow struct {
 	Section     string
 }
 
+func (c *Client) UpdateCard(ctx context.Context, id int64, name, description string) error {
+	q := `update cards set name=?, description=? where id = ?`
+
+	_, err := c.conn.ExecContext(ctx, q, name, description, id)
+	return err
+}
+
+func (c *Client) GetCardByID(ctx context.Context, id int64) (*entities.Card, error) {
+	q := `select id, name, description, section from cards where id = ?`
+
+	dbCard := CardRow{}
+	err := c.conn.GetContext(ctx, &dbCard, q, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entities.Card{
+		Id:          dbCard.Id,
+		Name:        dbCard.Name,
+		Description: dbCard.Description,
+		Section:     dbCard.Section,
+	}, nil
+}
+
 func (c *Client) DeleteCard(ctx context.Context, id int64, sectionName string) error {
 	q := `delete from cards where id = ? and section = ?`
 

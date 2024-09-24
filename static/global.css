@@ -14,3 +14,7 @@
 .fa-trash::before {
     content: "\f2ed";
 }
+
+.fa-pen-to-square::before{
+    content: "\f044"
+}

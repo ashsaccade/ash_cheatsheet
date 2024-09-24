@@ -37,6 +37,18 @@ type AddCardResult struct {
 	Class   string // is-danger
 }
 
+type EditCardResult struct {
+	Message string
+	Class   string
+}
+
+type EditCardPage struct {
+	Id          int64
+	Name        string
+	Description string
+	SectionName string
+}
+
 func main() {
 	tmpl, err := template.ParseGlob("templates/*.htm")
 	if err != nil {
@@ -56,6 +68,16 @@ func main() {
 	cardHtm := tmpl.Lookup("add_card.htm")
 	if cardHtm == nil {
 		panic("new_card htm is nil")
+	}
+
+	editCardHtm := tmpl.Lookup("edit.htm")
+	if editCardHtm == nil {
+		panic("edit card htm is nil")
+	}
+
+	editCardResultHtm := tmpl.Lookup("edit_result.htm")
+	if editCardResultHtm == nil {
+		panic("edit_result htm is nil")
 	}
 
 	addResult := tmpl.Lookup("add_result.htm")
@@ -101,6 +123,59 @@ func main() {
 			}
 		},
 	)
+
+	http.HandleFunc("GET /sheet/{section}/{card_id}/edit",
+		func(w http.ResponseWriter, r *http.Request) {
+			idStr := r.PathValue("card_id")
+			id, err := strconv.Atoi(idStr)
+			if err != nil {
+				logger.Fatal(err.Error())
+			}
+
+			card, err := cardsSrv.GetCardByID(int64(id))
+			if err != nil {
+				logger.Fatal(err.Error())
+			}
+
+			if err := editCardHtm.Execute(w, EditCardPage{
+				Id:          card.Id,
+				Name:        card.Name,
+				Description: card.Description,
+				SectionName: card.Section,
+			}); err != nil {
+				logger.Fatal(err.Error())
+			}
+		},
+	)
+
+	http.HandleFunc("POST /sheet/{section}/{card_id}/edit", func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.PathValue("card_id")
+		cardId, err := strconv.Atoi(idStr)
+		if err != nil {
+			logger.Fatal(err.Error())
+		}
+
+		rawFormData, err := io.ReadAll(r.Body)
+		if err != nil {
+			logger.Fatal(err.Error())
+		}
+
+		vals, err := url.ParseQuery(string(rawFormData))
+		if err != nil {
+			logger.Fatal(err.Error())
+		}
+
+		name := vals.Get("name")
+		description := vals.Get("description")
+
+		if err := cardsSrv.UpdateCardByID(int64(cardId), name, description); err != nil {
+			logger.Fatal(err.Error())
+		}
+
+		if err := editCardResultHtm.Execute(w, EditCardResult{Message: "Карточка изменена"}); err != nil {
+			logger.Fatal(err.Error())
+		}
+	})
 
 	http.HandleFunc("DELETE /sheet/{section}/{card_id}",
 		func(writer http.ResponseWriter, request *http.Request) {

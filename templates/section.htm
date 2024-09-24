@@ -24,9 +24,19 @@
     <div class="box" id="card_{{.Id}}">
         <span
                 hx-delete="/sheet/{{$.SectionName}}/{{.Id}}"
-                hx-target="#card_{{.Id}}" hx-swap="delete"
-                class="icon fa fa-trash is-clickable" style="float: right"
+                hx-target="#card_{{.Id}}"
+                hx-swap="delete"
+                class="icon fa fa-trash is-clickable"
+                style="float: right"
         ></span>
+
+        <a href="/sheet/{{$.SectionName}}/{{.Id}}/edit">
+            <span
+                    class="icon fa fa-pen-to-square is-clickable"
+                    style="float: right; color:darkslategray"
+            ></span>
+
+        </a>
 
         <div class="content">
             <h2>{{ .Name }}</h2>
