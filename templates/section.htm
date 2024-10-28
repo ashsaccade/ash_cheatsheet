@@ -20,8 +20,20 @@
         </a>
     </div>
 
+    <div class="content">
+        <blockquote>
+            Здесь можно накидывать информационные карточки.
+        </blockquote>
+    </div>
+
+    <div class="content" style="color: black">
+        This text is within a
+        <span class="tag is-light is-medium"> <strong>third block</strong>. </span>
+        This block has no margin at the bottom.
+    </div>
+
     {{ range .Cards }}
-    <div class="box" id="card_{{.Id}}">
+        <div class="box" id="card_{{.Id}}">
         <span
                 hx-delete="/sheet/{{$.SectionName}}/{{.Id}}"
                 hx-target="#card_{{.Id}}"
@@ -30,19 +42,20 @@
                 style="float: right"
         ></span>
 
-        <a href="/sheet/{{$.SectionName}}/{{.Id}}/edit">
+            <a href="/sheet/{{$.SectionName}}/{{.Id}}/edit">
             <span
                     class="icon fa fa-pen-to-square is-clickable"
-                    style="float: right; color:darkslategray"
+                    style="float: right;
+                    color:darkslategray"
             ></span>
 
-        </a>
+            </a>
 
-        <div class="content">
-            <h2>{{ .Name }}</h2>
-            <p>{{ .Description }}</p>
+            <div class="content">
+                <h2>{{ .Name }}</h2>
+                <p>{{ .Description }}</p>
+            </div>
         </div>
-    </div>
     {{ end }}
 </div>
 

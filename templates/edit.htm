@@ -13,13 +13,15 @@
 <body>
 <div class="container is-max-tablet">
     <div class="content mt-4">
-        <h1> <a href="/sheet/{{.SectionName}}">&lt;</a> Редактирование карточки</h1>
+        <h1><a href="/sheet/{{.SectionName}}">&lt;</a> Редактирование карточки</h1>
     </div>
 
     <form hx-post="/sheet/{{ .SectionName }}/{{.Id}}/edit" hx-target="#result">
         <input class="input mt-4" value="{{ .Name}}" type="text" placeholder="Название карточки" name="name"/>
-        <textarea class="textarea is-link mt-4" placeholder="Описание карточки"
-                  name="description">{{ .Description}}</textarea>
+        <textarea class="textarea is-link mt-4"
+                  placeholder="Описание карточки"
+                  name="description">{{ .Description}}
+        </textarea>
         <div class="is-flex is-justify-content-right">
             <input class="button is-success mt-4" type="submit" value="Сохранить"/>
         </div>
