@@ -5,9 +5,8 @@ import (
 	"ash_cheatsheet/internal/db"
 	"ash_cheatsheet/internal/entities"
 	"ash_cheatsheet/internal/errs"
+	"ash_cheatsheet/internal/handlers/preview"
 	"errors"
-	"github.com/pav5000/go-common/lambda"
-	"github.com/pav5000/logger"
 	"html/template"
 	"io"
 	"net/http"
@@ -15,6 +14,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/pav5000/go-common/lambda"
+	"github.com/pav5000/logger"
 )
 
 type SectionData struct {
@@ -113,6 +115,8 @@ func main() {
 			}
 		},
 	)
+
+	http.HandleFunc("POST /preview", preview.New())
 
 	http.HandleFunc("GET /sheet/{section}/add",
 		func(writer http.ResponseWriter, request *http.Request) {

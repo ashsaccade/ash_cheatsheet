@@ -15,6 +15,20 @@
     content: "\f2ed";
 }
 
-.fa-pen-to-square::before{
-    content: "\f044"
+.fa-pen-to-square::before {
+    content: "\f044";
+}
+
+.mycode {
+    background-color: #dddddd;
+    font-family: monospace;
+    padding: 4px;
+    border-radius: 2px;
+}
+
+.multicode {
+    border: solid 1px #dddddc;
+    margin: 5px;
+    border-radius: 5px;
+    overflow: hidden;
 }
