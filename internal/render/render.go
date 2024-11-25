@@ -2,7 +2,6 @@ package render
 
 import (
 	"bytes"
-	"html"
 	"regexp"
 	"strings"
 
@@ -40,7 +39,7 @@ func renderCode(in string) string {
 	return res
 }
 
-var boldRe = regexp.MustCompile(`(?U)\*\*(.+)\*\*`)
+var boldRe = regexp.MustCompile(`(?Um)\*\*(.+)\*\*`)
 
 func renderBold(in string) string {
 	return boldRe.ReplaceAllString(in, `<b>$1</b>`)
@@ -87,10 +86,11 @@ func renderBold2(in string) string {
 }
 
 func Render(in string) string {
-	in = html.EscapeString(in)
+	// in = html.EscapeString(in)
+	res := in
 
-	res := renderBold(in)
-	res = renderCode(in)
+	res = renderBold(res)
+	res = renderCode(res)
 
 	// res = strings.ReplaceAll(res, "\n", "<br>")
 

@@ -20,12 +20,16 @@
         <input class="input mt-4" value="{{ .Name}}" type="text" placeholder="Название карточки" name="name"/>
         <textarea class="textarea is-link mt-4"
                   placeholder="Описание карточки"
-                  name="description">{{ .Description}}
-        </textarea>
+                  name="description"
+                  hx-trigger="keyup changed delay:500ms"
+                  hx-post="/preview"
+                  hx-target="#preview"
+        >{{ .Description}}</textarea>
         <div class="is-flex is-justify-content-right">
             <input class="button is-success mt-4" type="submit" value="Сохранить"/>
         </div>
     </form>
+    <div id="preview"></div>
 
     <div id="result"></div>
 </div>
