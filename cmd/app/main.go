@@ -5,15 +5,15 @@ import (
 	"ash_cheatsheet/internal/db"
 	"ash_cheatsheet/internal/entities"
 	"ash_cheatsheet/internal/errs"
+	"ash_cheatsheet/internal/handlers/add"
 	"ash_cheatsheet/internal/handlers/preview"
+	"ash_cheatsheet/internal/handlers/static"
 	"errors"
 	"html/template"
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
-	"strings"
 
 	"github.com/pav5000/go-common/lambda"
 	"github.com/pav5000/logger"
@@ -22,10 +22,6 @@ import (
 type SectionData struct {
 	SectionName string
 	Cards       []CardView
-}
-
-type AddCardData struct {
-	SectionName string
 }
 
 type CardView struct {
@@ -67,11 +63,6 @@ func main() {
 		panic("section htm is nil")
 	}
 
-	cardHtm := tmpl.Lookup("add_card.htm")
-	if cardHtm == nil {
-		panic("new_card htm is nil")
-	}
-
 	editCardHtm := tmpl.Lookup("edit.htm")
 	if editCardHtm == nil {
 		panic("edit card htm is nil")
@@ -89,44 +80,9 @@ func main() {
 
 	cardsSrv := cards.New(dbsvc)
 
-	http.HandleFunc("GET /static/{filename}",
-		func(writer http.ResponseWriter, request *http.Request) {
-			fileName := request.PathValue("filename")
-
-			switch {
-			case strings.HasSuffix(fileName, ".css"):
-				writer.Header().Add("Content-Type", "text/css")
-			case strings.HasSuffix(fileName, ".woff2"):
-				writer.Header().Add("Content-Type", "application/font-woff2")
-			case strings.HasSuffix(fileName, ".js"):
-				writer.Header().Add("Content-Type", "text/javascript")
-			default:
-				panic("invalid file")
-			}
-
-			f, err := os.Open("static/" + fileName)
-			if err != nil {
-				logger.Fatal(err.Error())
-			}
-			defer f.Close()
-
-			if _, err := io.Copy(writer, f); err != nil {
-				logger.Fatal(err.Error())
-			}
-		},
-	)
-
+	http.HandleFunc("GET /static/{filename}", static.New())
 	http.HandleFunc("POST /preview", preview.New())
-
-	http.HandleFunc("GET /sheet/{section}/add",
-		func(writer http.ResponseWriter, request *http.Request) {
-			section := request.PathValue("section")
-
-			if err := cardHtm.Execute(writer, AddCardData{SectionName: section}); err != nil {
-				logger.Fatal(err.Error())
-			}
-		},
-	)
+	http.HandleFunc("GET /sheet/{section}/add", add.New(*tmpl))
 
 	http.HandleFunc("GET /sheet/{section}/{card_id}/edit",
 		func(w http.ResponseWriter, r *http.Request) {
