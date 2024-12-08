@@ -3,49 +3,18 @@ package main
 import (
 	"ash_cheatsheet/internal/cards"
 	"ash_cheatsheet/internal/db"
-	"ash_cheatsheet/internal/entities"
-	"ash_cheatsheet/internal/errs"
-	"ash_cheatsheet/internal/handlers/add"
+	"ash_cheatsheet/internal/handlers/addcard"
+	"ash_cheatsheet/internal/handlers/deletecard"
+	"ash_cheatsheet/internal/handlers/getadd"
+	"ash_cheatsheet/internal/handlers/geteditcard"
+	"ash_cheatsheet/internal/handlers/getsection"
+	"ash_cheatsheet/internal/handlers/posteditcard"
 	"ash_cheatsheet/internal/handlers/preview"
 	"ash_cheatsheet/internal/handlers/static"
-	"errors"
-	"html/template"
-	"io"
-	"net/http"
-	"net/url"
-	"strconv"
-
-	"github.com/pav5000/go-common/lambda"
 	"github.com/pav5000/logger"
+	"html/template"
+	"net/http"
 )
-
-type SectionData struct {
-	SectionName string
-	Cards       []CardView
-}
-
-type CardView struct {
-	Name        string
-	Description string
-	Id          int64
-}
-
-type AddCardResult struct {
-	Message string
-	Class   string // is-danger
-}
-
-type EditCardResult struct {
-	Message string
-	Class   string
-}
-
-type EditCardPage struct {
-	Id          int64
-	Name        string
-	Description string
-	SectionName string
-}
 
 func main() {
 	tmpl, err := template.ParseGlob("templates/*.htm")
@@ -58,154 +27,23 @@ func main() {
 		logger.Fatal(err.Error())
 	}
 
-	sectionHtm := tmpl.Lookup("section.htm")
-	if sectionHtm == nil {
-		panic("section htm is nil")
-	}
-
-	editCardHtm := tmpl.Lookup("edit.htm")
-	if editCardHtm == nil {
-		panic("edit card htm is nil")
-	}
-
-	editCardResultHtm := tmpl.Lookup("edit_result.htm")
-	if editCardResultHtm == nil {
-		panic("edit_result htm is nil")
-	}
-
-	addResult := tmpl.Lookup("add_result.htm")
-	if addResult == nil {
-		panic("add result htm is nil")
-	}
-
 	cardsSrv := cards.New(dbsvc)
+
+	editCardHandler := geteditcard.New(tmpl, cardsSrv)
+	getAddCardHandler := getadd.New(tmpl)
+	addCardHandler := addcard.New(cardsSrv, tmpl)
+	postEditCard := posteditcard.New(tmpl, cardsSrv)
+	deleteCard := deletecard.New(cardsSrv)
+	sectionViewHandler := getsection.New(tmpl, cardsSrv)
 
 	http.HandleFunc("GET /static/{filename}", static.New())
 	http.HandleFunc("POST /preview", preview.New())
-	http.HandleFunc("GET /sheet/{section}/add", add.New(*tmpl))
-
-	http.HandleFunc("GET /sheet/{section}/{card_id}/edit",
-		func(w http.ResponseWriter, r *http.Request) {
-			idStr := r.PathValue("card_id")
-			id, err := strconv.Atoi(idStr)
-			if err != nil {
-				logger.Fatal(err.Error())
-			}
-
-			card, err := cardsSrv.GetCardByID(int64(id))
-			if err != nil {
-				logger.Fatal(err.Error())
-			}
-
-			if err := editCardHtm.Execute(w, EditCardPage{
-				Id:          card.Id,
-				Name:        card.Name,
-				Description: card.Description,
-				SectionName: card.Section,
-			}); err != nil {
-				logger.Fatal(err.Error())
-			}
-		},
-	)
-
-	http.HandleFunc("POST /sheet/{section}/{card_id}/edit", func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("card_id")
-		cardId, err := strconv.Atoi(idStr)
-		if err != nil {
-			logger.Fatal(err.Error())
-		}
-
-		rawFormData, err := io.ReadAll(r.Body)
-		if err != nil {
-			logger.Fatal(err.Error())
-		}
-
-		vals, err := url.ParseQuery(string(rawFormData))
-		if err != nil {
-			logger.Fatal(err.Error())
-		}
-
-		name := vals.Get("name")
-		description := vals.Get("description")
-
-		if err := cardsSrv.UpdateCardByID(int64(cardId), name, description); err != nil {
-			logger.Fatal(err.Error())
-		}
-
-		if err := editCardResultHtm.Execute(w, EditCardResult{Message: "Карточка изменена"}); err != nil {
-			logger.Fatal(err.Error())
-		}
-	})
-
-	http.HandleFunc("DELETE /sheet/{section}/{card_id}",
-		func(writer http.ResponseWriter, request *http.Request) {
-			sectionName := request.PathValue("section")
-			idStr := request.PathValue("card_id")
-			id, err := strconv.Atoi(idStr)
-			if err != nil {
-				logger.Fatal(err.Error())
-			}
-
-			if err := cardsSrv.DeleteCard(int64(id), sectionName); err != nil {
-				logger.Fatal(err.Error())
-			}
-		},
-	)
-
-	http.HandleFunc("POST /sheet/{section}/add",
-		func(writer http.ResponseWriter, request *http.Request) {
-			rawFormData, err := io.ReadAll(request.Body)
-			if err != nil {
-				logger.Fatal(err.Error())
-			}
-
-			vals, err := url.ParseQuery(string(rawFormData))
-			if err != nil {
-				logger.Fatal(err.Error())
-			}
-
-			sectionName := request.PathValue("section")
-
-			var res AddCardResult
-
-			err = cardsSrv.CreateNewCard(vals.Get("name"), vals.Get("description"), sectionName)
-			switch {
-			case errors.Is(err, errs.ErrEmptyCardName):
-				res = AddCardResult{Message: "Имя карточки не может быть пустым!", Class: "is-danger"}
-			case errors.Is(err, errs.ErrEmptyCardDesc):
-				res = AddCardResult{Message: "Описание карточки не может быть пустым!", Class: "is-danger"}
-			default:
-				res = AddCardResult{Message: "Новая карточка добавлена в секцию " + sectionName}
-			}
-			if err := addResult.Execute(writer, res); err != nil {
-				logger.Fatal(err.Error())
-			}
-		},
-	)
-
-	http.HandleFunc("GET /sheet/{section}",
-		func(writer http.ResponseWriter, request *http.Request) {
-			section := request.PathValue("section")
-
-			cardsBySection, err := dbsvc.SelectAllCardsBySection(request.Context(), section)
-			if err != nil {
-				logger.Fatal(err.Error())
-			}
-
-			if err := sectionHtm.Execute(writer, SectionData{
-				SectionName: section,
-				Cards: lambda.MapSlice(cardsBySection, func(card entities.Card) CardView {
-					return CardView{
-						Name:        card.Name,
-						Description: card.Description,
-						Id:          card.Id,
-					}
-				}),
-			}); err != nil {
-				logger.Fatal(err.Error())
-			}
-		},
-	)
+	http.HandleFunc("GET /sheet/{section}/add", getAddCardHandler.Handle())
+	http.HandleFunc("GET /sheet/{section}/{card_id}/edit", editCardHandler.Handle())
+	http.HandleFunc("POST /sheet/{section}/{card_id}/edit", postEditCard.Handle())
+	http.HandleFunc("DELETE /sheet/{section}/{card_id}", deleteCard.Handle())
+	http.HandleFunc("POST /sheet/{section}/add", addCardHandler.Handle())
+	http.HandleFunc("GET /sheet/{section}", sectionViewHandler.Handle())
 
 	err = http.ListenAndServe("127.0.0.1:8080", nil)
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"ash_cheatsheet/internal/entities"
 	"ash_cheatsheet/internal/errs"
 	"context"
+	"fmt"
 	"strings"
 )
 
@@ -12,31 +13,32 @@ type Repository interface {
 	DeleteCard(ctx context.Context, id int64, sectionName string) error
 	GetCardByID(ctx context.Context, id int64) (*entities.Card, error)
 	UpdateCard(ctx context.Context, id int64, name, description string) error
+	SelectAllCardsBySection(ctx context.Context, sectionName string) ([]entities.Card, error)
 }
 
-type Client struct {
+type Service struct {
 	db Repository
 }
 
-func New(db Repository) *Client { return &Client{db: db} }
+func New(db Repository) *Service { return &Service{db: db} }
 
-func (c *Client) DeleteCard(id int64, sectionName string) error {
-	if err := c.db.DeleteCard(context.Background(), id, sectionName); err != nil {
+func (s *Service) DeleteCard(id int64, sectionName string) error {
+	if err := s.db.DeleteCard(context.Background(), id, sectionName); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Client) UpdateCardByID(id int64, name, description string) error {
-	err := c.db.UpdateCard(context.Background(), id, name, description)
+func (s *Service) UpdateCardByID(id int64, name, description string) error {
+	err := s.db.UpdateCard(context.Background(), id, name, description)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Client) GetCardByID(id int64) (*entities.Card, error) {
-	card, err := c.db.GetCardByID(context.Background(), id)
+func (s *Service) GetCardByID(id int64) (*entities.Card, error) {
+	card, err := s.db.GetCardByID(context.Background(), id)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +46,7 @@ func (c *Client) GetCardByID(id int64) (*entities.Card, error) {
 	return card, err
 }
 
-func (c *Client) CreateNewCard(name, description, sectionName string) error {
+func (s *Service) CreateNewCard(name, description, sectionName string) error {
 	if strings.TrimSpace(name) == "" {
 		return errs.ErrEmptyCardName
 	}
@@ -53,7 +55,7 @@ func (c *Client) CreateNewCard(name, description, sectionName string) error {
 		return errs.ErrEmptyCardDesc
 	}
 
-	err := c.db.InsertNewCard(context.Background(), entities.Card{
+	err := s.db.InsertNewCard(context.Background(), entities.Card{
 		Name:        name,
 		Description: description,
 		Section:     sectionName,
@@ -62,4 +64,12 @@ func (c *Client) CreateNewCard(name, description, sectionName string) error {
 		panic(err)
 	}
 	return err
+}
+
+func (s *Service) GetCards(sectionName string) ([]entities.Card, error) {
+	res, err := s.db.SelectAllCardsBySection(context.Background(), sectionName)
+	if err != nil {
+		return nil, fmt.Errorf("db.SelectAllCardsBySection: %w", err)
+	}
+	return res, nil
 }
