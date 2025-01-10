@@ -1,4 +1,4 @@
-package getadd
+package getaddcard
 
 import (
 	"net/http"

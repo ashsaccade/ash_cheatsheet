@@ -19,9 +19,8 @@
     <form hx-post="/sheet/{{ .SectionName }}/{{.Id}}/edit" hx-target="#result">
         <input class="input mt-4" value="{{ .Name}}" type="text" placeholder="Название карточки" name="name"/>
         <textarea class="textarea is-link mt-4"
-                  placeholder="Описание карточки"
                   name="description"
-                  hx-trigger="keyup changed delay:500ms"
+                  hx-trigger="load, click delay:1s"
                   hx-post="/preview"
                   hx-target="#preview"
         >{{ .Description}}</textarea>

@@ -5,7 +5,7 @@ import (
 	"ash_cheatsheet/internal/db"
 	"ash_cheatsheet/internal/handlers/addcard"
 	"ash_cheatsheet/internal/handlers/deletecard"
-	"ash_cheatsheet/internal/handlers/getadd"
+	"ash_cheatsheet/internal/handlers/getaddcard"
 	"ash_cheatsheet/internal/handlers/geteditcard"
 	"ash_cheatsheet/internal/handlers/getsection"
 	"ash_cheatsheet/internal/handlers/posteditcard"
@@ -30,7 +30,7 @@ func main() {
 	cardsSrv := cards.New(dbsvc)
 
 	editCardHandler := geteditcard.New(tmpl, cardsSrv)
-	getAddCardHandler := getadd.New(tmpl)
+	getAddCardHandler := getaddcard.New(tmpl)
 	addCardHandler := addcard.New(cardsSrv, tmpl)
 	postEditCard := posteditcard.New(tmpl, cardsSrv)
 	deleteCard := deletecard.New(cardsSrv)

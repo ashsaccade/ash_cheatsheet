@@ -1,0 +1,18 @@
+package grammar
+
+type AshMd Peg {
+
+}
+
+md <- ( regularText / boldBlock / codeBlock / bigCodeBlock )+ !.
+
+regularText <- [^*`]+
+
+boldBlock <- '*' boldText '*'
+boldText <- [^*]+
+
+codeBlock <- '`' codeText '`'
+codeText <- [^`]+
+
+bigCodeBlock <- '```' bigCodeText '```'
+bigCodeText <- ( . !'```' )+ .

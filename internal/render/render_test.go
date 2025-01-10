@@ -27,3 +27,13 @@ func Test_Render_Incorrect(t *testing.T) {
 	// out := Render("Hello **world**! `code` ```go``` ")
 	assert.Equal(t, "Hello <b>wo*rld</b>!", out)
 }
+
+func Test_OneBacktick(t *testing.T) {
+	out := Render("a `b`")
+	assert.Equal(t, "a `b`", out)
+}
+
+func Test_OneBacktick_2(t *testing.T) {
+	out := Render("a ```b``` `c`")
+	assert.Equal(t, "a ```b``` `c`", out)
+}

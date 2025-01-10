@@ -3,6 +3,7 @@ package getsection
 import (
 	"ash_cheatsheet/internal/cards"
 	"ash_cheatsheet/internal/entities"
+	"ash_cheatsheet/internal/render"
 	"github.com/pav5000/go-common/lambda"
 	"github.com/pav5000/logger"
 	"html/template"
@@ -21,7 +22,7 @@ type SectionData struct {
 
 type CardView struct {
 	Name        string
-	Description string
+	Description template.HTML
 	Id          int64
 }
 
@@ -48,7 +49,7 @@ func (h *Handler) Handle() func(http.ResponseWriter, *http.Request) {
 			Cards: lambda.MapSlice(cardsBySection, func(card entities.Card) CardView {
 				return CardView{
 					Name:        card.Name,
-					Description: card.Description,
+					Description: template.HTML(render.Render(card.Description)),
 					Id:          card.Id,
 				}
 			}),
