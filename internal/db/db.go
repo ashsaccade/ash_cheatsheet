@@ -4,7 +4,10 @@ import (
 	"ash_cheatsheet/internal/entities"
 	"context"
 	"embed"
+	"time"
+
 	"github.com/pav5000/easy-sqlite"
+	"github.com/pav5000/go-common/lambda"
 )
 
 //go:embed migrations/*.sql
@@ -28,6 +31,7 @@ type CardRow struct {
 	Name        string
 	Description string
 	Section     string
+	LastUpdated time.Time `db:"last_updated"`
 }
 
 func (c *Client) UpdateCard(ctx context.Context, id int64, name, description string) error {
@@ -66,10 +70,10 @@ func (c *Client) DeleteCard(ctx context.Context, id int64, sectionName string) e
 
 func (c *Client) InsertNewCard(ctx context.Context, card entities.Card) error {
 	q := `
-	insert into cards (name, description, section)
-	values (?, ?, ?)`
+	insert into cards (name, description, section, last_updated)
+	values (?, ?, ?, ?)`
 
-	_, err := c.conn.ExecContext(ctx, q, card.Name, card.Description, card.Section)
+	_, err := c.conn.ExecContext(ctx, q, card.Name, card.Description, card.Section, card.LastUpdated)
 	if err != nil {
 		return err
 	}
@@ -78,7 +82,7 @@ func (c *Client) InsertNewCard(ctx context.Context, card entities.Card) error {
 
 func (c *Client) SelectAllCardsBySection(ctx context.Context, sectionName string) ([]entities.Card, error) {
 	q := `
-		select id, name, description, section
+		select id, name, description, section, last_updated
 		from cards
 		where section = ?`
 
@@ -89,14 +93,14 @@ func (c *Client) SelectAllCardsBySection(ctx context.Context, sectionName string
 		return nil, err
 	}
 
-	res := make([]entities.Card, 0, len(cardsDb))
-	for _, row := range cardsDb {
-		res = append(res, entities.Card{
+	res := lambda.MapSlice(cardsDb, func(row CardRow) entities.Card {
+		return entities.Card{
 			Id:          row.Id,
 			Name:        row.Name,
 			Description: row.Description,
 			Section:     row.Section,
-		})
-	}
-	return res, nil
+			LastUpdated: row.LastUpdated,
+		}
+	})
+	return res, err
 }

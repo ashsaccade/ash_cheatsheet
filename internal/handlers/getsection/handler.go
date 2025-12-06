@@ -4,10 +4,12 @@ import (
 	"ash_cheatsheet/internal/cards"
 	"ash_cheatsheet/internal/entities"
 	"ash_cheatsheet/internal/render"
-	"github.com/pav5000/go-common/lambda"
-	"github.com/pav5000/logger"
 	"html/template"
 	"net/http"
+	"time"
+
+	"github.com/pav5000/go-common/lambda"
+	"github.com/pav5000/logger"
 )
 
 type Handler struct {
@@ -24,6 +26,7 @@ type CardView struct {
 	Name        string
 	Description template.HTML
 	Id          int64
+	LastUpdated string
 }
 
 func New(tmpl *template.Template, c *cards.Service) *Handler {
@@ -47,7 +50,12 @@ func (h *Handler) Handle() func(http.ResponseWriter, *http.Request) {
 		err = h.htmTemplate.Execute(writer, SectionData{
 			SectionName: section,
 			Cards: lambda.MapSlice(cardsBySection, func(card entities.Card) CardView {
-				v := CardView{Name: card.Name, Id: card.Id}
+				date := card.LastUpdated.Format(time.DateOnly)
+				v := CardView{
+					Name:        card.Name,
+					Id:          card.Id,
+					LastUpdated: date,
+				}
 				renderedDesc, err := render.Render(card.Description)
 				if err != nil {
 					logger.Error(err.Error())

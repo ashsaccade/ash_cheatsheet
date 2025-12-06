@@ -37,7 +37,7 @@ func Render(in string) (string, error) {
 			out.WriteString("</span>")
 		case grammar.BlockTypeBigCode:
 			out.WriteString(`<div class="multicode">`)
-			// monokai fill the background of dark colour
+			// monokai fill with the background of dark colour
 			// quick.Highlight(out, block.Str, "go", "html", "monokai") // dark theme
 			quick.Highlight(out, block.Str, "go", "html", "xcode") // light theme
 			out.WriteString(`</div>`)

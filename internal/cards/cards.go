@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 )
 
 type Repository interface {
@@ -23,27 +24,15 @@ type Service struct {
 func New(db Repository) *Service { return &Service{db: db} }
 
 func (s *Service) DeleteCard(id int64, sectionName string) error {
-	if err := s.db.DeleteCard(context.Background(), id, sectionName); err != nil {
-		return err
-	}
-	return nil
+	return s.db.DeleteCard(context.Background(), id, sectionName)
 }
 
 func (s *Service) UpdateCardByID(id int64, name, description string) error {
-	err := s.db.UpdateCard(context.Background(), id, name, description)
-	if err != nil {
-		return err
-	}
-	return nil
+	return s.db.UpdateCard(context.Background(), id, name, description)
 }
 
 func (s *Service) GetCardByID(id int64) (*entities.Card, error) {
-	card, err := s.db.GetCardByID(context.Background(), id)
-	if err != nil {
-		return nil, err
-	}
-
-	return card, err
+	return s.db.GetCardByID(context.Background(), id)
 }
 
 func (s *Service) CreateNewCard(name, description, sectionName string) error {
@@ -59,6 +48,7 @@ func (s *Service) CreateNewCard(name, description, sectionName string) error {
 		Name:        name,
 		Description: description,
 		Section:     sectionName,
+		LastUpdated: time.Now(),
 	})
 	return err
 }
