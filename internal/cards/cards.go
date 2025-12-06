@@ -60,9 +60,6 @@ func (s *Service) CreateNewCard(name, description, sectionName string) error {
 		Description: description,
 		Section:     sectionName,
 	})
-	if err != nil {
-		panic(err)
-	}
 	return err
 }
 

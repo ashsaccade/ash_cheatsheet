@@ -1,59 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Test</title>
+        <link rel="stylesheet" href="/static/bulma.min.css" />
+        <link rel="stylesheet" href="/static/global.css" />
+        <script src="/static/htmx.js"></script>
+    </head>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Test</title>
-    <link rel="stylesheet" href="/static/bulma.min.css">
-    <link rel="stylesheet" href="/static/global.css">
-    <script src="/static/htmx.js"></script>
-</head>
+    <body>
+        <div class="container is-max-tablet">
+            <div class="content">
+                1
+                <h1>Cheatsheet for {{ .SectionName }}</h1>
+                <a href="/sheet/{{.SectionName}}/add"> Add card </a>
+            </div>
 
-<body>
+            {{ range .Cards }}
+            <div class="card">
+                <div class="note">
+                    <div class="title">{{ .Name }}</div>
 
-<div class="container is-max-tablet">
-    <div class="content">
-        <h1> Cheatsheet for {{ .SectionName }} </h1>
-        <a href="/sheet/{{.SectionName}}/add">
-            Add card
-        </a>
-    </div>
+                    <div class="date">04.12.2025</div>
+                    <div>
+                        <a href="/sheet/{{$.SectionName}}/{{.Id}}/edit">
+                            <span
+                                class="icon fa fa-pen-to-square is-clickable"
+                                style="float: right; color: darkslategray"
+                            ></span>
+                        </a>
+                        <span
+                            hx-delete="/sheet/{{$.SectionName}}/{{.Id}}"
+                            hx-target="#card_{{.Id}}"
+                            hx-swap="delete"
+                            class="icon fa fa-trash is-clickable"
+                            style="float: right"
+                        ></span>
+                    </div>
 
-    <div class="content" style="color: black">
-        This text is within a
-        <span class="tag is-light is-medium"> <strong>third block</strong>. </span>
-        This block has no margin at the bottom.
-    </div>
-
-    {{ range .Cards }}
-    <div class="box" id="card_{{.Id}}">
-        <span
-                hx-delete="/sheet/{{$.SectionName}}/{{.Id}}"
-                hx-target="#card_{{.Id}}"
-                hx-swap="delete"
-                class="icon fa fa-trash is-clickable"
-                style="float: right"
-        ></span>
-
-        <a href="/sheet/{{$.SectionName}}/{{.Id}}/edit">
-            <span
-                    class="icon fa fa-pen-to-square is-clickable"
-                    style="float: right;
-                    color:darkslategray"
-            ></span>
-        </a>
-
-        <div class="content">
-            <h2>{{ .Name }}</h2>
-            <p>{{ .Description }}</p>
+                    <div class="note-content">
+                        <div class="content">
+                            <p>{{ .Description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{ end }}
         </div>
-
-        <div id="preview"></div>
-    </div>
-    {{ end }}
-</div>
-
-</body>
-
+    </body>
 </html>

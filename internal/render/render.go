@@ -1,98 +1,52 @@
 package render
 
 import (
-	"bytes"
-	"regexp"
+	"fmt"
+	"html"
+
 	"strings"
+
+	"ash_cheatsheet/internal/grammar"
 
 	"github.com/alecthomas/chroma/v2/quick"
 )
 
-type State int
+func Render(in string) (string, error) {
+	md := &grammar.AshMd{Buffer: in}
+	if err := md.Init(); err != nil {
+		return "", fmt.Errorf("failed to init md: %v", err)
+	}
 
-const (
-	StateWaitingForFirstAsterisk State = iota
-	StateWaitingForSecondAsterisk
-	StateBold
-	StateWaitingSecondClosing
-)
+	if err := md.Parse(); err != nil {
+		return "", fmt.Errorf("failed to parse md: %v", err)
+	}
+	// md.PrettyPrintSyntaxTree(in)
 
-var singleCodeRe = regexp.MustCompile("(?U)`([^`]+)`")
-var multiCodeRe = regexp.MustCompile("(?Ums)```(.+)```")
-
-func renderCode(in string) string {
-	res := in
-
-	res = multiCodeRe.ReplaceAllStringFunc(res, func(match string) string {
-		match = strings.Trim(match, "```")
-		match = strings.TrimSpace(match)
-
-		buf := bytes.NewBuffer(nil)
-		quick.Highlight(buf, match, "go", "html", "xcode")
-		match = buf.String()
-
-		return `<div class="multicode">` + match + "</div>"
-	})
-
-	// res =singleCodeRe.ReplaceAllString(in, `<span class="mycode">$1</span>`)
-
-	return res
-}
-
-var boldRe = regexp.MustCompile(`(?Um)\*\*(.+)\*\*`)
-
-func renderBold(in string) string {
-	return boldRe.ReplaceAllString(in, `<b>$1</b>`)
-}
-
-func renderBold2(in string) string {
-	res := strings.Builder{}
-	state := StateWaitingForFirstAsterisk
-	for _, letter := range in {
-		switch state {
-		case StateWaitingForFirstAsterisk:
-			if letter == '*' {
-				state = StateWaitingForSecondAsterisk
-			} else {
-				res.WriteRune(letter)
-			}
-		case StateWaitingForSecondAsterisk:
-			if letter == '*' {
-				state = StateBold
-				res.WriteString("<b>")
-			} else {
-				state = StateWaitingForFirstAsterisk
-				res.WriteByte('*')
-				res.WriteRune(letter)
-			}
-		case StateBold:
-			if letter == '*' {
-				state = StateWaitingSecondClosing
-			} else {
-				res.WriteRune(letter)
-			}
-		case StateWaitingSecondClosing:
-			if letter == '*' {
-				state = StateWaitingForFirstAsterisk
-				res.WriteString("</b>")
-			} else {
-				state = StateBold
-				res.WriteByte('*')
-				res.WriteRune(letter)
-			}
+	out := &strings.Builder{}
+	for _, block := range md.ParseAST(in) {
+		switch block.Type {
+		case grammar.BlockTypeText:
+			out.WriteString(processText(block.Str))
+		case grammar.BlockTypeBold:
+			out.WriteString("<b>")
+			out.WriteString(processText(block.Str))
+			out.WriteString("</b>")
+		case grammar.BlockTypeCode:
+			out.WriteString(`<span class="inlinecode">`)
+			out.WriteString(html.EscapeString(block.Str))
+			out.WriteString("</span>")
+		case grammar.BlockTypeBigCode:
+			out.WriteString(`<div class="multicode">`)
+			// monokai fill the background of dark colour
+			// quick.Highlight(out, block.Str, "go", "html", "monokai") // dark theme
+			quick.Highlight(out, block.Str, "go", "html", "xcode") // light theme
+			out.WriteString(`</div>`)
 		}
 	}
-	return res.String()
+	return out.String(), nil
 }
 
-func Render(in string) string {
-	// in = html.EscapeString(in)
-	res := in
-
-	res = renderBold(res)
-	res = renderCode(res)
-
-	// res = strings.ReplaceAll(res, "\n", "<br>")
-
-	return res
+func processText(in string) string {
+	in = html.EscapeString(in)
+	return strings.ReplaceAll(in, "\n", "<br>")
 }

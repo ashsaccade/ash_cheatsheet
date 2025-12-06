@@ -47,11 +47,14 @@ func (h *Handler) Handle() func(http.ResponseWriter, *http.Request) {
 		err = h.htmTemplate.Execute(writer, SectionData{
 			SectionName: section,
 			Cards: lambda.MapSlice(cardsBySection, func(card entities.Card) CardView {
-				return CardView{
-					Name:        card.Name,
-					Description: template.HTML(render.Render(card.Description)),
-					Id:          card.Id,
+				v := CardView{Name: card.Name, Id: card.Id}
+				renderedDesc, err := render.Render(card.Description)
+				if err != nil {
+					logger.Error(err.Error())
+					return v
 				}
+				v.Description = template.HTML(renderedDesc)
+				return v
 			}),
 		})
 		if err != nil {

@@ -19,8 +19,28 @@
     content: "\f044";
 }
 
-.mycode {
-    background-color: #dddddd;
+.note {
+    display: grid;
+    grid-template-columns: 10fr 2fr 1fr;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    max-width: 900px;
+}
+
+.note-content {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    color: black;
+}
+
+.date {
+    text-align: right;
+}
+
+.inlinecode {
+    background-color: #f2f4f5;
     font-family: monospace;
     padding: 4px;
     border-radius: 2px;
@@ -29,6 +49,12 @@
 .multicode {
     border: solid 1px #dddddc;
     margin: 5px;
-    border-radius: 5px;
+    border-radius: 13px;
     overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #000;
+    }
 }

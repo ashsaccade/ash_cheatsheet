@@ -7,33 +7,25 @@ import (
 )
 
 func Test_Render_SimpleText_ShoulbBeRendredAsIs(t *testing.T) {
-	out := Render("hello world!")
+	out, err := Render("hello world!")
+	assert.NoError(t, err)
 	assert.Equal(t, "hello world!", out)
 }
 
 func Test_Render_HtmlTags_ShouldBeEscaped(t *testing.T) {
-	out := Render("<div></div>")
+	out, err := Render("<div></div>")
+	assert.NoError(t, err)
 	assert.Equal(t, "&lt;div&gt;&lt;/div&gt;", out)
 }
 
 func Test_Render_BoldMarkdown_ShouldBeWrappedInBTag(t *testing.T) {
-	out := Render("Hello **world**!")
-	// out := Render("Hello **world**! `code` ```go``` ")
-	assert.Equal(t, "Hello <b>world</b>!", out)
-}
-
-func Test_Render_Incorrect(t *testing.T) {
-	out := Render("Hello **wo*rld**!")
-	// out := Render("Hello **world**! `code` ```go``` ")
-	assert.Equal(t, "Hello <b>wo*rld</b>!", out)
+	out, err := Render("Hello *world* `world`!")
+	assert.NoError(t, err)
+	assert.Equal(t, `Hello <b>world</b> <span class="inlinecode">world</span>!`, out)
 }
 
 func Test_OneBacktick(t *testing.T) {
-	out := Render("a `b`")
-	assert.Equal(t, "a `b`", out)
-}
-
-func Test_OneBacktick_2(t *testing.T) {
-	out := Render("a ```b``` `c`")
-	assert.Equal(t, "a ```b``` `c`", out)
+	out, err := Render("a `b`")
+	assert.NoError(t, err)
+	assert.Equal(t, "a <span class=\"inlinecode\">b</span>", out)
 }

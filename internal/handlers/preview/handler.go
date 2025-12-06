@@ -23,7 +23,10 @@ func New() func(writer http.ResponseWriter, r *http.Request) {
 
 		description := vals.Get("description")
 
-		res := render.Render(description)
+		res, err := render.Render(description)
+		if err != nil {
+			logger.Error(err.Error())
+		}
 		writer.Write([]byte(res))
 	}
 }
