@@ -12,9 +12,13 @@
     <body>
         <div class="container is-max-tablet">
             <div class="content">
-                1
                 <h1>Cheatsheet for {{ .SectionName }}</h1>
-                <a href="/sheet/{{.SectionName}}/add"> Add card </a>
+                <a
+                    href="/sheet/{{.SectionName}}/add"
+                    class="button is-info is-light"
+                >
+                    Add card
+                </a>
             </div>
 
             {{ range .Cards }}
@@ -24,12 +28,6 @@
 
                     <div class="date">04.12.2025</div>
                     <div>
-                        <a href="/sheet/{{$.SectionName}}/{{.Id}}/edit">
-                            <span
-                                class="icon fa fa-pen-to-square is-clickable"
-                                style="float: right; color: darkslategray"
-                            ></span>
-                        </a>
                         <span
                             hx-delete="/sheet/{{$.SectionName}}/{{.Id}}"
                             hx-target="#card_{{.Id}}"
@@ -37,6 +35,12 @@
                             class="icon fa fa-trash is-clickable"
                             style="float: right"
                         ></span>
+                        <a href="/sheet/{{$.SectionName}}/{{.Id}}/edit">
+                            <span
+                                class="icon fa fa-pen-to-square is-clickable"
+                                style="float: right; color: darkslategray"
+                            ></span>
+                        </a>
                     </div>
 
                     <div class="note-content">

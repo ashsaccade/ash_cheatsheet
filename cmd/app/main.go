@@ -11,9 +11,10 @@ import (
 	"ash_cheatsheet/internal/handlers/posteditcard"
 	"ash_cheatsheet/internal/handlers/preview"
 	"ash_cheatsheet/internal/handlers/static"
-	"github.com/pav5000/logger"
 	"html/template"
 	"net/http"
+
+	"github.com/pav5000/logger"
 )
 
 func main() {
