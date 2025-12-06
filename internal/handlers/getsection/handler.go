@@ -26,7 +26,7 @@ type CardView struct {
 	Name        string
 	Description template.HTML
 	Id          int64
-	LastUpdated string
+	UpdatedAt   string
 }
 
 func New(tmpl *template.Template, c *cards.Service) *Handler {
@@ -50,11 +50,10 @@ func (h *Handler) Handle() func(http.ResponseWriter, *http.Request) {
 		err = h.htmTemplate.Execute(writer, SectionData{
 			SectionName: section,
 			Cards: lambda.MapSlice(cardsBySection, func(card entities.Card) CardView {
-				date := card.LastUpdated.Format(time.DateOnly)
 				v := CardView{
-					Name:        card.Name,
-					Id:          card.Id,
-					LastUpdated: date,
+					Name:      card.Name,
+					Id:        card.Id,
+					UpdatedAt: card.UpdatedAt.Format(time.DateOnly),
 				}
 				renderedDesc, err := render.Render(card.Description)
 				if err != nil {

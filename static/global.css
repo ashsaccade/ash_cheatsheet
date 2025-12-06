@@ -19,20 +19,20 @@
     content: "\f044";
 }
 
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
 .note {
     display: grid;
     grid-template-columns: 10fr 2fr 1fr;
     gap: 8px;
     padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    max-width: 900px;
 }
 
 .note-content {
     grid-column-start: 1;
     grid-column-end: 4;
-    color: black;
 }
 
 .date {
@@ -40,10 +40,11 @@
 }
 
 .inlinecode {
-    background-color: #f2f4f5;
+    background-color: #42444a;
     font-family: monospace;
     padding: 4px;
     border-radius: 2px;
+    color: #bcbec4;
 }
 
 .multicode {
@@ -54,7 +55,5 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    body {
-        background-color: #000;
-    }
+    /*body {background-color: #000;}*/
 }

@@ -21,10 +21,10 @@
             </div>
 
             {{ range .Cards }}
-            <div id="card_{{.Id}}" class="card">
+            <div id="card_{{.Id}}" class="card" >
                 <div class="note">
                     <div class="title">{{ .Name }}</div>
-                    <div class="date">{{ .LastUpdated }}</div>
+                    <div class="date">{{ .UpdatedAt }}</div>
                     <div>
                         <span
                             hx-delete="/sheet/{{$.SectionName}}/{{.Id}}"

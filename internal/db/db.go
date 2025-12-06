@@ -31,7 +31,7 @@ type CardRow struct {
 	Name        string
 	Description string
 	Section     string
-	LastUpdated time.Time `db:"last_updated"`
+	UpdatedAt   time.Time `db:"updated_at"`
 }
 
 func (c *Client) UpdateCard(ctx context.Context, id int64, name, description string) error {
@@ -73,7 +73,7 @@ func (c *Client) InsertNewCard(ctx context.Context, card entities.Card) error {
 	insert into cards (name, description, section, last_updated)
 	values (?, ?, ?, ?)`
 
-	_, err := c.conn.ExecContext(ctx, q, card.Name, card.Description, card.Section, card.LastUpdated)
+	_, err := c.conn.ExecContext(ctx, q, card.Name, card.Description, card.Section, card.UpdatedAt)
 	if err != nil {
 		return err
 	}
@@ -82,9 +82,9 @@ func (c *Client) InsertNewCard(ctx context.Context, card entities.Card) error {
 
 func (c *Client) SelectAllCardsBySection(ctx context.Context, sectionName string) ([]entities.Card, error) {
 	q := `
-		select id, name, description, section, last_updated
+		select id, name, description, section, updated_at
 		from cards
-		where section = ?`
+		where section = ? order by updated_at desc`
 
 	var cardsDb []CardRow
 
@@ -99,7 +99,7 @@ func (c *Client) SelectAllCardsBySection(ctx context.Context, sectionName string
 			Name:        row.Name,
 			Description: row.Description,
 			Section:     row.Section,
-			LastUpdated: row.LastUpdated,
+			UpdatedAt:   row.UpdatedAt,
 		}
 	})
 	return res, err

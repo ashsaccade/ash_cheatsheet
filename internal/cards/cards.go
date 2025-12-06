@@ -48,7 +48,7 @@ func (s *Service) CreateNewCard(name, description, sectionName string) error {
 		Name:        name,
 		Description: description,
 		Section:     sectionName,
-		LastUpdated: time.Now(),
+		UpdatedAt:   time.Now(),
 	})
 	return err
 }

@@ -2,9 +2,10 @@ package deletecard
 
 import (
 	"ash_cheatsheet/internal/cards"
-	"github.com/pav5000/logger"
 	"net/http"
 	"strconv"
+
+	"github.com/pav5000/logger"
 )
 
 type Handler struct {

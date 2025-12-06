@@ -7,5 +7,5 @@ type Card struct {
 	Name        string
 	Description string
 	Section     string
-	LastUpdated time.Time
+	UpdatedAt   time.Time
 }
