@@ -1,6 +1,9 @@
 package main
 
 import (
+	"html/template"
+	"net/http"
+
 	"ash_cheatsheet/internal/cards"
 	"ash_cheatsheet/internal/db"
 	"ash_cheatsheet/internal/handlers/addcard"
@@ -11,8 +14,6 @@ import (
 	"ash_cheatsheet/internal/handlers/posteditcard"
 	"ash_cheatsheet/internal/handlers/preview"
 	"ash_cheatsheet/internal/handlers/static"
-	"html/template"
-	"net/http"
 
 	"github.com/pav5000/logger"
 )

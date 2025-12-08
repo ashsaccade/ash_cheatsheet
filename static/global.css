@@ -20,19 +20,26 @@
 }
 
 .card {
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    background-color: #13161a;
 }
 
 .note {
     display: grid;
-    grid-template-columns: 10fr 2fr 1fr;
+    grid-template-columns: 10fr 2fr 2fr;
     gap: 8px;
     padding: 16px;
+    color: #ebecf0;
+}
+
+.title {
+    color: #ebecf0;
 }
 
 .note-content {
     grid-column-start: 1;
     grid-column-end: 4;
+    color: #ebecf0;
 }
 
 .date {
@@ -55,5 +62,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    /*body {background-color: #000;}*/
+    body {
+        background-color: #000;
+    }
 }

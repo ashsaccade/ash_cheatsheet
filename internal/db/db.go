@@ -70,7 +70,7 @@ func (c *Client) DeleteCard(ctx context.Context, id int64, sectionName string) e
 
 func (c *Client) InsertNewCard(ctx context.Context, card entities.Card) error {
 	q := `
-	insert into cards (name, description, section, last_updated)
+	insert into cards (name, description, section, updated_at)
 	values (?, ?, ?, ?)`
 
 	_, err := c.conn.ExecContext(ctx, q, card.Name, card.Description, card.Section, card.UpdatedAt)
