@@ -16,6 +16,7 @@ type Repository interface {
 	UpdateCard(ctx context.Context, id int64, name, description string) error
 	TogglePinCard(ctx context.Context, id int64, sectionName string) error
 	SelectAllCardsBySection(ctx context.Context, sectionName string) ([]entities.Card, error)
+	SelectSections(ctx context.Context) ([]string, error)
 }
 
 type Service struct {
@@ -62,6 +63,14 @@ func (s *Service) GetCards(sectionName string) ([]entities.Card, error) {
 	res, err := s.db.SelectAllCardsBySection(context.Background(), sectionName)
 	if err != nil {
 		return nil, fmt.Errorf("db.SelectAllCardsBySection: %w", err)
+	}
+	return res, nil
+}
+
+func (s *Service) GetSections() ([]string, error) {
+	res, err := s.db.SelectSections(context.Background())
+	if err != nil {
+		return nil, fmt.Errorf("db.SelectSections: %w", err)
 	}
 	return res, nil
 }

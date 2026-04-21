@@ -183,6 +183,22 @@ a:hover {
     color: #fff;
 }
 
+.category-switcher {
+    margin-bottom: 0.75rem;
+}
+
+.category-switcher .button.is-active {
+    background-color: #20262f;
+    border-color: #d8dee9;
+    color: #fff;
+}
+
+.category-switcher .button.is-active:hover {
+    background-color: #252c36;
+    border-color: #fff;
+    color: #fff;
+}
+
 .notification {
     background-color: #111419;
     border: 1px solid #313743;

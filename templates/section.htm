@@ -18,6 +18,15 @@
                 <br>
                 <br>
                 <!--<h1>Cheatsheet for {{ .SectionName }}</h1>-->
+                {{ if .Sections }}
+                <div class="category-switcher buttons">
+                    {{ range .Sections }}
+                    <a href="/sheet/{{.Name}}" class="button {{if .Active}}is-active{{end}}">
+                        {{ .Name }}
+                    </a>
+                    {{ end }}
+                </div>
+                {{ end }}
                 <a href="/sheet/{{.SectionName}}/add" class="button is-success">
                     Add card
                 </a>

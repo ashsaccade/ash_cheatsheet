@@ -19,7 +19,13 @@ type Handler struct {
 
 type SectionData struct {
 	SectionName string
+	Sections    []SectionView
 	Cards       []CardView
+}
+
+type SectionView struct {
+	Name   string
+	Active bool
 }
 
 type CardView struct {
@@ -48,8 +54,19 @@ func (h *Handler) Handle() func(http.ResponseWriter, *http.Request) {
 			logger.Fatal(err.Error())
 		}
 
+		sections, err := h.cards.GetSections()
+		if err != nil {
+			logger.Fatal(err.Error())
+		}
+
 		err = h.htmTemplate.Execute(writer, SectionData{
 			SectionName: section,
+			Sections: lambda.MapSlice(sections, func(sectionName string) SectionView {
+				return SectionView{
+					Name:   sectionName,
+					Active: sectionName == section,
+				}
+			}),
 			Cards: lambda.MapSlice(cardsBySection, func(card entities.Card) CardView {
 				v := CardView{
 					Name:      card.Name,

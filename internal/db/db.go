@@ -114,3 +114,14 @@ func (c *Client) SelectAllCardsBySection(ctx context.Context, sectionName string
 	})
 	return res, err
 }
+
+func (c *Client) SelectSections(ctx context.Context) ([]string, error) {
+	q := `select distinct section from cards order by section asc`
+
+	var sections []string
+	err := c.conn.SelectContext(ctx, &sections, q)
+	if err != nil {
+		return nil, err
+	}
+	return sections, nil
+}
