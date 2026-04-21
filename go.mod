@@ -1,8 +1,9 @@
 module ash_cheatsheet
 
-go 1.23.0
+go 1.26.2
 
 require (
+	github.com/alecthomas/chroma/v2 v2.14.0
 	github.com/pav5000/easy-sqlite v0.0.1
 	github.com/pav5000/go-common v0.0.9
 	github.com/pav5000/logger v0.1.2
@@ -11,7 +12,6 @@ require (
 )
 
 require (
-	github.com/alecthomas/chroma/v2 v2.14.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/jmoiron/sqlx v1.4.0 // indirect
