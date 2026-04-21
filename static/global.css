@@ -6,6 +6,10 @@
     src: url("fa-solid-900.woff2") format("woff2");
 }
 
+.tag {
+    font-size: 0.75rem;
+}
+
 .fa {
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
