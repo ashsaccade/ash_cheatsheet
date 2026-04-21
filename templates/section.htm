@@ -12,7 +12,7 @@
     <body>
         <div class="container is-max-tablet">
             <div class="content">
-                <span class="title" style="color: #ebecf0;">
+                <span class="title">
                     Cheatsheet for {{ .SectionName }}
                 </span>
                 <br>
@@ -28,7 +28,7 @@
                 <div class="note">
                     <div class="title">{{ .Name }}</div>
                     <div class="date">{{ .UpdatedAt }}</div>
-                    <div>
+                    <div class="note-actions">
                         <div class="tag is-warning">tech</div>
                         <span
                             hx-delete="/sheet/{{$.SectionName}}/{{.Id}}"
@@ -38,8 +38,7 @@
                         ></span>
                         <a href="/sheet/{{$.SectionName}}/{{.Id}}/edit">
                             <span
-                                class="icon fa fa-pen-to-square is-clickable"
-                                style="float: right; color: darkslategray"
+                                class="icon fa fa-pen-to-square is-clickable edit-card-icon"
                             ></span>
                         </a>
                     </div>

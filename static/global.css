@@ -23,14 +23,58 @@
     content: "\f044";
 }
 
+.edit-card-icon {
+    float: none;
+}
+
+html {
+    background-color: #000;
+}
+
+body {
+    min-height: 100vh;
+    background-color: #000;
+    color: #ebecf0;
+}
+
+a {
+    color: #d8dee9;
+}
+
+a:hover {
+    color: #fff;
+}
+
+.container {
+    padding: 1rem;
+}
+
+.content {
+    color: #ebecf0;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6,
+.label {
+    color: #f7f7f8;
+}
+
 .card {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: none;
     background-color: #13161a;
+    border: 1px solid #242830;
+    border-radius: 4px;
+    margin-top: 1rem;
 }
 
 .note {
     display: grid;
-    grid-template-columns: 10fr 2fr 2fr;
+    grid-template-columns: minmax(0, 1fr) max-content max-content;
+    align-items: center;
     gap: 8px;
     padding: 16px;
     color: #ebecf0;
@@ -47,26 +91,115 @@
 }
 
 .date {
+    align-self: center;
     text-align: right;
+    white-space: nowrap;
+    color: #9da3ad;
+}
+
+.note-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.note-actions a {
+    display: inline-flex;
 }
 
 .inlinecode {
-    background-color: #42444a;
+    background-color: #1e2229;
     font-family: monospace;
     padding: 4px;
     border-radius: 2px;
-    color: #bcbec4;
+    color: #d7dae0;
 }
 
 .multicode {
-    border: solid 1px #dddddc;
-    margin: 5px;
-    border-radius: 13px;
+    border: solid 1px #2d323b;
+    margin: 0.75rem 0;
+    border-radius: 4px;
     overflow: hidden;
 }
 
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: #000;
-    }
+.input,
+.textarea,
+.select select {
+    background-color: #08090b;
+    border-color: #2a2f38;
+    color: #f2f3f5;
+    box-shadow: none;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+    color: #777f8c;
+}
+
+.input:hover,
+.textarea:hover,
+.select select:hover {
+    border-color: #3a414d;
+}
+
+.input:focus,
+.textarea:focus,
+.select select:focus {
+    border-color: #f2f3f5;
+    box-shadow: 0 0 0 1px #f2f3f5;
+}
+
+.textarea.is-link {
+    border-color: #2a2f38;
+}
+
+.button {
+    background-color: #111419;
+    border-color: #313743;
+    color: #f2f3f5;
+}
+
+.button:hover {
+    background-color: #1a1f26;
+    border-color: #4b5564;
+    color: #fff;
+}
+
+.button.is-success {
+    background-color: #15191f;
+    border-color: #5b6676;
+    color: #f2f3f5;
+}
+
+.button.is-success:hover {
+    background-color: #20262f;
+    border-color: #d8dee9;
+    color: #fff;
+}
+
+.notification {
+    background-color: #111419;
+    border: 1px solid #313743;
+    color: #f2f3f5;
+}
+
+.notification.is-danger {
+    background-color: #211113;
+    border-color: #663139;
+    color: #ffd8dd;
+}
+
+.tag.is-warning {
+    background-color: #25200f;
+    color: #efe3b0;
+}
+
+.icon {
+    color: #b9c0ca;
+}
+
+.icon:hover {
+    color: #fff;
 }
