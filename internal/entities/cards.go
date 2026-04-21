@@ -8,4 +8,5 @@ type Card struct {
 	Description string
 	Section     string
 	UpdatedAt   time.Time
+	Pinned      bool
 }

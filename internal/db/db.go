@@ -32,6 +32,7 @@ type CardRow struct {
 	Description string
 	Section     string
 	UpdatedAt   time.Time `db:"updated_at"`
+	Pinned      bool
 }
 
 func (c *Client) UpdateCard(ctx context.Context, id int64, name, description string) error {
@@ -41,8 +42,15 @@ func (c *Client) UpdateCard(ctx context.Context, id int64, name, description str
 	return err
 }
 
+func (c *Client) TogglePinCard(ctx context.Context, id int64, sectionName string) error {
+	q := `update cards set pinned = not pinned where id = ? and section = ?`
+
+	_, err := c.conn.ExecContext(ctx, q, id, sectionName)
+	return err
+}
+
 func (c *Client) GetCardByID(ctx context.Context, id int64) (*entities.Card, error) {
-	q := `select id, name, description, section from cards where id = ?`
+	q := `select id, name, description, section, pinned from cards where id = ?`
 
 	dbCard := CardRow{}
 	err := c.conn.GetContext(ctx, &dbCard, q, id)
@@ -55,6 +63,7 @@ func (c *Client) GetCardByID(ctx context.Context, id int64) (*entities.Card, err
 		Name:        dbCard.Name,
 		Description: dbCard.Description,
 		Section:     dbCard.Section,
+		Pinned:      dbCard.Pinned,
 	}, nil
 }
 
@@ -70,10 +79,10 @@ func (c *Client) DeleteCard(ctx context.Context, id int64, sectionName string) e
 
 func (c *Client) InsertNewCard(ctx context.Context, card entities.Card) error {
 	q := `
-	insert into cards (name, description, section, updated_at)
-	values (?, ?, ?, ?)`
+	insert into cards (name, description, section, updated_at, pinned)
+	values (?, ?, ?, ?, ?)`
 
-	_, err := c.conn.ExecContext(ctx, q, card.Name, card.Description, card.Section, card.UpdatedAt)
+	_, err := c.conn.ExecContext(ctx, q, card.Name, card.Description, card.Section, card.UpdatedAt, card.Pinned)
 	if err != nil {
 		return err
 	}
@@ -82,9 +91,9 @@ func (c *Client) InsertNewCard(ctx context.Context, card entities.Card) error {
 
 func (c *Client) SelectAllCardsBySection(ctx context.Context, sectionName string) ([]entities.Card, error) {
 	q := `
-		select id, name, description, section, updated_at
+		select id, name, description, section, updated_at, pinned
 		from cards
-		where section = ? order by updated_at desc`
+		where section = ? order by pinned desc, updated_at desc`
 
 	var cardsDb []CardRow
 
@@ -100,6 +109,7 @@ func (c *Client) SelectAllCardsBySection(ctx context.Context, sectionName string
 			Description: row.Description,
 			Section:     row.Section,
 			UpdatedAt:   row.UpdatedAt,
+			Pinned:      row.Pinned,
 		}
 	})
 	return res, err

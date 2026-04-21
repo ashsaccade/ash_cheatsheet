@@ -14,6 +14,7 @@ type Repository interface {
 	DeleteCard(ctx context.Context, id int64, sectionName string) error
 	GetCardByID(ctx context.Context, id int64) (*entities.Card, error)
 	UpdateCard(ctx context.Context, id int64, name, description string) error
+	TogglePinCard(ctx context.Context, id int64, sectionName string) error
 	SelectAllCardsBySection(ctx context.Context, sectionName string) ([]entities.Card, error)
 }
 
@@ -29,6 +30,10 @@ func (s *Service) DeleteCard(id int64, sectionName string) error {
 
 func (s *Service) UpdateCardByID(id int64, name, description string) error {
 	return s.db.UpdateCard(context.Background(), id, name, description)
+}
+
+func (s *Service) TogglePinCard(id int64, sectionName string) error {
+	return s.db.TogglePinCard(context.Background(), id, sectionName)
 }
 
 func (s *Service) GetCardByID(id int64) (*entities.Card, error) {

@@ -23,6 +23,10 @@
     content: "\f044";
 }
 
+.fa-thumbtack::before {
+    content: "\f08d";
+}
+
 .edit-card-icon {
     float: none;
 }
@@ -202,4 +206,8 @@ a:hover {
 
 .icon:hover {
     color: #fff;
+}
+
+.pin-card-icon.is-pinned {
+    color: #f2f3f5;
 }

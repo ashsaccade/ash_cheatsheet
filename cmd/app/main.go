@@ -11,6 +11,7 @@ import (
 	"ash_cheatsheet/internal/handlers/getaddcard"
 	"ash_cheatsheet/internal/handlers/geteditcard"
 	"ash_cheatsheet/internal/handlers/getsection"
+	"ash_cheatsheet/internal/handlers/pincard"
 	"ash_cheatsheet/internal/handlers/posteditcard"
 	"ash_cheatsheet/internal/handlers/preview"
 	"ash_cheatsheet/internal/handlers/static"
@@ -36,6 +37,7 @@ func main() {
 	addCardHandler := addcard.New(cardsSrv, tmpl)
 	postEditCard := posteditcard.New(tmpl, cardsSrv)
 	deleteCard := deletecard.New(cardsSrv)
+	pinCard := pincard.New(cardsSrv)
 	sectionViewHandler := getsection.New(tmpl, cardsSrv)
 
 	http.HandleFunc("GET /static/{filename}", static.New())
@@ -43,6 +45,7 @@ func main() {
 	http.HandleFunc("GET /sheet/{section}/add", getAddCardHandler.Handle())
 	http.HandleFunc("GET /sheet/{section}/{card_id}/edit", editCardHandler.Handle())
 	http.HandleFunc("POST /sheet/{section}/{card_id}/edit", postEditCard.Handle())
+	http.HandleFunc("POST /sheet/{section}/{card_id}/pin", pinCard.Handle())
 	http.HandleFunc("DELETE /sheet/{section}/{card_id}", deleteCard.Handle())
 	http.HandleFunc("POST /sheet/{section}/add", addCardHandler.Handle())
 	http.HandleFunc("GET /sheet/{section}", sectionViewHandler.Handle())

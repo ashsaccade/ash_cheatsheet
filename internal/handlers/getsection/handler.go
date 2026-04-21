@@ -27,6 +27,7 @@ type CardView struct {
 	Description template.HTML
 	Id          int64
 	UpdatedAt   string
+	Pinned      bool
 }
 
 func New(tmpl *template.Template, c *cards.Service) *Handler {
@@ -54,6 +55,7 @@ func (h *Handler) Handle() func(http.ResponseWriter, *http.Request) {
 					Name:      card.Name,
 					Id:        card.Id,
 					UpdatedAt: card.UpdatedAt.Format(time.DateOnly),
+					Pinned:    card.Pinned,
 				}
 				renderedDesc, err := render.Render(card.Description)
 				if err != nil {

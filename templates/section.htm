@@ -31,6 +31,12 @@
                     <div class="note-actions">
                         <div class="tag is-warning">tech</div>
                         <span
+                            hx-post="/sheet/{{$.SectionName}}/{{.Id}}/pin"
+                            hx-swap="none"
+                            class="icon fa fa-thumbtack is-clickable pin-card-icon {{if .Pinned}}is-pinned{{end}}"
+                            title="{{if .Pinned}}Unpin card{{else}}Pin card{{end}}"
+                        ></span>
+                        <span
                             hx-delete="/sheet/{{$.SectionName}}/{{.Id}}"
                             hx-target="#card_{{.Id}}"
                             hx-swap="delete"

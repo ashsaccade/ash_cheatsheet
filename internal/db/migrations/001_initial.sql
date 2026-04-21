@@ -5,7 +5,7 @@ CREATE TABLE cards
     name         STRING   NOT NULL,
     description  STRING   NOT NULL,
     section      STRING   NOT NULL,
-    last_updated DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
     UNIQUE (section, name)
 );
 
