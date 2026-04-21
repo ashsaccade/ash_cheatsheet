@@ -3,12 +3,14 @@ package render
 import (
 	"fmt"
 	"html"
-
 	"strings"
 
 	"ash_cheatsheet/internal/grammar"
 
-	"github.com/alecthomas/chroma/v2/quick"
+	"github.com/alecthomas/chroma/v2"
+	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/alecthomas/chroma/v2/lexers"
+	"github.com/alecthomas/chroma/v2/styles"
 )
 
 func Render(in string) (string, error) {
@@ -37,12 +39,34 @@ func Render(in string) (string, error) {
 			out.WriteString("</span>")
 		case grammar.BlockTypeBigCode:
 			out.WriteString(`<div class="multicode">`)
-			quick.Highlight(out, block.Str, "go", "html", "monokai") // dark theme
-			//quick.Highlight(out, block.Str, "go", "html", "xcode") // light theme
+			if err := highlightGo(out, block.Str); err != nil {
+				return "", fmt.Errorf("failed to highlight code: %v", err)
+			}
 			out.WriteString(`</div>`)
 		}
 	}
 	return out.String(), nil
+}
+
+func highlightGo(out *strings.Builder, source string) error {
+	lexer := lexers.Get("go")
+	if lexer == nil {
+		lexer = lexers.Fallback
+	}
+	lexer = chroma.Coalesce(lexer)
+
+	style := styles.Get("monokai")
+	if style == nil {
+		style = styles.Fallback
+	}
+
+	iterator, err := lexer.Tokenise(nil, source)
+	if err != nil {
+		return err
+	}
+
+	formatter := chromahtml.New(chromahtml.WithClasses(false))
+	return formatter.Format(out, style, iterator)
 }
 
 func processText(in string) string {
